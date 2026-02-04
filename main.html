@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вопрос для тебя</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #F8C8DC; /* Розовый фон */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header-text {
+            color: #D81B60; /* Темно-розовый цвет текста */
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .gif-container img {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+        }
+
+        /* Контейнер для кнопок */
+        .buttons {
+            margin-top: 20px;
+            position: relative; /* Делаем контейнер точкой отсчета для позиционирования кнопок */
+            height: 50px; /* Задаем высоту, чтобы кнопки не выпадали из потока */
+        }
+
+        .btn {
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 12px;
+            
+            /* Позиционируем кнопки абсолютно внутри контейнера .buttons */
+            position: absolute;
+            top: 0;
+            left: 50%; /* Центрируем по горизонтали */
+
+            /* Плавные переходы для движения и изменения размера */
+            transition: transform 0.4s ease;
+        }
+
+        #yes-btn {
+            background-color: #4CAF50; /* Зеленый */
+            /* Сдвигаем кнопку "Да" влево от центра */
+            transform: translateX(-110%);
+            /* Ставим ее НАД кнопкой "Нет" */
+            z-index: 2;
+        }
+
+        #no-btn {
+            background-color: #f44336; /* Красный */
+            /* Сдвигаем кнопку "Нет" вправо от центра */
+            transform: translateX(10%);
+             /* Ставим ее ПОД кнопкой "Да" */
+            z-index: 1;
+        }
+
+        #success-container {
+            display: none; /* Изначально скрыт */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Начальный экран -->
+        <div id="question-container">
+            <h1 class="header-text">Ты будешь моей Валентинкой?</h1>
+            <div class="gif-container">
+                <img src="https://media1.tenor.com/m/eg-oRhfUTK4AAAAd/reaction-meme-stan-twt.gif" alt="миньончик">
+            </div>
+            <div class="buttons">
+                <button class="btn" id="yes-btn">Да</button>
+                <button class="btn" id="no-btn">Нет</button>
+            </div>
+        </div>
+
+        <!-- Экран успеха -->
+        <div id="success-container">
+            <h1 class="header-text">УРААА!!!</h1>
+            <div class="gif-container">
+                <img src="https://media1.tenor.com/m/1Ze3AoBHyW0AAAAd/fireworks-exploding-heart.gif" alt="Фейерверк">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const questionContainer = document.getElementById('question-container');
+        const successContainer = document.getElementById('success-container');
+
+        const phrases = [
+            "Нет",
+            "Ты уверена?",
+            "Точно-точно уверена?",
+            "Подумай еще раз!",
+            "Последний шанс!",
+            "Может, все-таки да?",
+            "Ты разобьешь мне сердце ;(",
+            "Я буду плакать...",
+            "Ну почемуууу?"
+        ];
+
+        let phraseIndex = 0;
+        let yesBtnScale = 1;
+
+        // При нажатии на "Нет"
+        noBtn.addEventListener('click', () => {
+            // Увеличиваем масштаб кнопки "Да"
+            yesBtnScale += 0.5;
+            
+            // Меняем текст на кнопке "Нет"
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            noBtn.textContent = phrases[phraseIndex];
+
+            // Перемещаем обе кнопки в центр, чтобы они наложились друг на друга
+            // Кнопка "Да" будет сверху из-за z-index и будет увеличиваться
+            yesBtn.style.transform = `translateX(-50%) scale(${yesBtnScale})`;
+            noBtn.style.transform = 'translateX(-50%)';
+        });
+
+        // При нажатии на "Да"
+        yesBtn.addEventListener('click', () => {
+            questionContainer.style.display = 'none';
+            successContainer.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
