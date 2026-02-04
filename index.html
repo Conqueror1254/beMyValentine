@@ -13,7 +13,7 @@
             background-color: #F8C8DC; /* Розовый фон */
             font-family: Arial, sans-serif;
             margin: 0;
-            overflow: hidden;
+            overflow: hidden; /* Скрываем полосы прокрутки */
         }
 
         .container {
@@ -23,7 +23,7 @@
 
         .header-text {
             color: #D81B60; /* Темно-розовый цвет текста */
-            font-size: 1.5em;
+            font-size: 1.5em; /* Начальный размер шрифта */
             margin-bottom: 20px;
         }
 
@@ -33,11 +33,12 @@
             border-radius: 10px;
         }
 
-        /* Контейнер для кнопок */
         .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Пространство между кнопками */
             margin-top: 20px;
-            position: relative; /* Делаем контейнер точкой отсчета для позиционирования кнопок */
-            height: 50px; /* Задаем высоту, чтобы кнопки не выпадали из потока */
         }
 
         .btn {
@@ -51,30 +52,17 @@
             font-weight: bold;
             cursor: pointer;
             border-radius: 12px;
-            
-            /* Позиционируем кнопки абсолютно внутри контейнера .buttons */
-            position: absolute;
-            top: 0;
-            left: 50%; /* Центрируем по горизонтали */
-
-            /* Плавные переходы для движения и изменения размера */
-            transition: transform 0.4s ease;
+            transition: transform 0.3s ease; /* Плавный переход для увеличения */
         }
 
         #yes-btn {
             background-color: #4CAF50; /* Зеленый */
-            /* Сдвигаем кнопку "Да" влево от центра */
-            transform: translateX(-110%);
-            /* Ставим ее НАД кнопкой "Нет" */
-            z-index: 2;
         }
 
         #no-btn {
             background-color: #f44336; /* Красный */
-            /* Сдвигаем кнопку "Нет" вправо от центра */
-            transform: translateX(10%);
-             /* Ставим ее ПОД кнопкой "Да" */
-            z-index: 1;
+            /* Плавный переход для движения */
+            transition: transform 0.3s ease, top 0.5s ease, left 0.5s ease;
         }
 
         #success-container {
@@ -84,7 +72,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Начальный экран -->
+        <!-- Начальный экран с вопросом -->
         <div id="question-container">
             <h1 class="header-text">Ты будешь моей Валентинкой?</h1>
             <div class="gif-container">
@@ -96,7 +84,7 @@
             </div>
         </div>
 
-        <!-- Экран успеха -->
+        <!-- Экран после нажатия "Да" -->
         <div id="success-container">
             <h1 class="header-text">УРААА!!!</h1>
             <div class="gif-container">
@@ -119,6 +107,7 @@
             "Последний шанс!",
             "Может, все-таки да?",
             "Ты разобьешь мне сердце ;(",
+            "Пожалуйстаааа",
             "Я буду плакать...",
             "Ну почемуууу?"
         ];
@@ -126,19 +115,38 @@
         let phraseIndex = 0;
         let yesBtnScale = 1;
 
-        // При нажатии на "Нет"
+        // Функция для перемещения кнопки в случайное место
+        function moveButton() {
+            // Меняем позиционирование, чтобы кнопка могла "летать" по всему экрану
+            noBtn.style.position = 'fixed';
+
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const btnRect = noBtn.getBoundingClientRect();
+
+            // Вычисляем случайные координаты в пределах видимой части окна
+            let newTop = Math.random() * (viewportHeight - btnRect.height);
+            let newLeft = Math.random() * (viewportWidth - btnRect.width);
+
+            noBtn.style.top = `${newTop}px`;
+            noBtn.style.left = `${newLeft}px`;
+        }
+
+        // Запускаем функцию перемещения при наведении мыши
+        noBtn.addEventListener('mouseover', moveButton);
+
+        // Логика при нажатии на "Нет" (если пользователь все же сможет ее поймать)
         noBtn.addEventListener('click', () => {
-            // Увеличиваем масштаб кнопки "Да"
+            // Увеличиваем кнопку "Да"
             yesBtnScale += 0.5;
-            
+            yesBtn.style.transform = `scale(${yesBtnScale})`;
+
             // Меняем текст на кнопке "Нет"
             phraseIndex = (phraseIndex + 1) % phrases.length;
             noBtn.textContent = phrases[phraseIndex];
-
-            // Перемещаем обе кнопки в центр, чтобы они наложились друг на друга
-            // Кнопка "Да" будет сверху из-за z-index и будет увеличиваться
-            yesBtn.style.transform = `translateX(-50%) scale(${yesBtnScale})`;
-            noBtn.style.transform = 'translateX(-50%)';
+            
+            // И снова перемещаем кнопку
+            moveButton();
         });
 
         // При нажатии на "Да"
@@ -149,4 +157,3 @@
     </script>
 </body>
 </html>
-
